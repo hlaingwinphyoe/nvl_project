@@ -1,0 +1,35 @@
+@layer components {
+    .container {
+        @apply minsm:max-w-[640px] minmd:max-w-[768px] minlg:max-w-[1170px] minxl:max-w-[1170px] min2xl:max-w-[1600px];
+    }
+
+    .btn-primary {
+        @apply py-2 px-4 bg-primary-500 text-white font-semibold rounded-lg shadow-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-opacity-75;
+    }
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    /* -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none; */
+    overflow-x: hidden;
+}
+
+[type="text"]:focus,
+[type="password"]:focus,
+[type="number"]:focus,
+[type="email"]:focus,
+[type="textarea"]:focus {
+    outline-offset: 0 !important;
+    outline: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+.example-showcase .el-loading-mask {
+    z-index: 9;
+}
