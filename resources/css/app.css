@@ -33,3 +33,7 @@ body {
 .example-showcase .el-loading-mask {
     z-index: 9;
 }
+
+.el-button {
+    padding: 16px 13px !important;
+}

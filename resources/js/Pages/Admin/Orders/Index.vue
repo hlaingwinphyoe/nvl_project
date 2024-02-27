@@ -21,7 +21,6 @@
                                 />
                             </div>
                         </div>
-
                         <div
                             class="relative overflow-x-auto"
                             v-loading="isLoading"
@@ -29,33 +28,44 @@
                             element-loading-background="rgba(229, 231, 235, 0.7)"
                         >
                             <el-table
-                                :data="customers.data"
+                                :data="orders.data"
+                                table-layout="fixed"
                                 :default-sort="{
                                     prop: 'id',
                                     order: 'descending',
                                 }"
-                                table-layout="fixed"
                             >
                                 <el-table-column
                                     prop="id"
                                     label="Sr."
                                     sortable
-                                    width="150"
+                                    width="100"
                                 />
                                 <el-table-column
-                                    prop="name"
-                                    label="Name"
+                                    prop="customer_name"
+                                    label="Customer"
                                     sortable
                                     align="center"
                                 />
                                 <el-table-column
-                                    prop="username"
-                                    label="Username"
+                                    prop="total_price"
+                                    label="Total Price"
                                     align="center"
                                 />
                                 <el-table-column
-                                    prop="phone"
-                                    label="Phone"
+                                    prop="total_price"
+                                    label="Order Items"
+                                    align="center"
+                                >
+                                    <template #default="scope">
+                                        <el-tag type="success">{{
+                                            scope.row.order_count
+                                        }}</el-tag>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column
+                                    prop="user"
+                                    label="Created By"
                                     align="center"
                                 />
                                 <el-table-column
@@ -65,8 +75,26 @@
                                     align="center"
                                 />
 
-                                <el-table-column label="Actions" align="center">
+                                <el-table-column
+                                    label="Actions"
+                                    align="center"
+                                    width="150px"
+                                >
                                     <template #default="scope">
+                                        <el-tooltip
+                                            class="box-item"
+                                            content="Detail"
+                                            placement="top"
+                                        >
+                                            <el-button
+                                                type="success"
+                                                style="margin-bottom: 5px"
+                                                circle
+                                                @click="handelDetail(scope.row)"
+                                            >
+                                                <el-icon><View /></el-icon>
+                                            </el-button>
+                                        </el-tooltip>
                                         <el-tooltip
                                             class="box-item"
                                             content="Edit"
@@ -81,7 +109,7 @@
                                                 <el-icon><Edit /></el-icon>
                                             </el-button>
                                         </el-tooltip>
-                                        <!-- <el-tooltip
+                                        <el-tooltip
                                             class="box-item"
                                             content="Delete"
                                             placement="top"
@@ -96,80 +124,6 @@
                                             >
                                                 <el-icon><Delete /></el-icon>
                                             </el-button>
-                                        </el-tooltip> -->
-
-                                        <el-tooltip
-                                            v-if="scope.row.is_ban == 0"
-                                            class="box-item"
-                                            content="Ban"
-                                            placement="top"
-                                        >
-                                            <el-button
-                                                type="danger"
-                                                circle
-                                                style="margin-bottom: 5px"
-                                                @click="handleBan(scope.row.id)"
-                                            >
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    class="icon icon-tabler icon-tabler-ban"
-                                                    width="16"
-                                                    height="16"
-                                                    viewBox="0 0 24 24"
-                                                    stroke-width="1.5"
-                                                    stroke="currentColor"
-                                                    fill="none"
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                >
-                                                    <path
-                                                        stroke="none"
-                                                        d="M0 0h24v24H0z"
-                                                        fill="none"
-                                                    />
-                                                    <path
-                                                        d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"
-                                                    />
-                                                    <path
-                                                        d="M5.7 5.7l12.6 12.6"
-                                                    />
-                                                </svg>
-                                            </el-button>
-                                        </el-tooltip>
-                                        <el-tooltip
-                                            v-else
-                                            class="box-item"
-                                            content="UnBan"
-                                            placement="top"
-                                        >
-                                            <el-button
-                                                type="info"
-                                                circle
-                                                style="margin-bottom: 5px"
-                                                @click="handleBan(scope.row.id)"
-                                            >
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    class="icon icon-tabler icon-tabler-arrow-back"
-                                                    width="16"
-                                                    height="16"
-                                                    viewBox="0 0 24 24"
-                                                    stroke-width="1.5"
-                                                    stroke="currentColor"
-                                                    fill="none"
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                >
-                                                    <path
-                                                        stroke="none"
-                                                        d="M0 0h24v24H0z"
-                                                        fill="none"
-                                                    />
-                                                    <path
-                                                        d="M9 11l-4 4l4 4m-4 -4h11a4 4 0 0 0 0 -8h-1"
-                                                    />
-                                                </svg>
-                                            </el-button>
                                         </el-tooltip>
                                     </template>
                                 </el-table-column>
@@ -183,7 +137,7 @@
                                     :page-sizes="pageList"
                                     :current-page="param.page"
                                     :layout="`total,sizes,prev,pager,next,jumper`"
-                                    :total="customers.total"
+                                    :total="orders.total"
                                 />
                             </div>
                         </div>
@@ -197,23 +151,34 @@
             @closed="closeDialog"
             :title="dialog.dialogTitle"
             :data="dialog.dialogData"
+            :customers="customers"
+            :series="series"
+        />
+
+        <Detail
+            :show="showDetail"
+            @closed="closeDialog"
+            :title="dialog.dialogTitle"
+            :data="dialog.dialogData"
         />
     </AuthenticatedLayout>
 </template>
 
 <script>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { Delete, Edit, Plus } from "@element-plus/icons-vue";
+import { Delete, Edit, Plus, View } from "@element-plus/icons-vue";
 import { Head, router } from "@inertiajs/vue3";
 import { reactive, toRefs, watch } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import debounce from "lodash.debounce";
 import Dialog from "./Dialog.vue";
+import Detail from "./Detail.vue";
 export default {
-    props: ["customers"],
+    props: ["orders", "customers", "series"],
     setup(props) {
         const state = reactive({
             showDialog: false,
+            showDetail: false,
             isLoading: false,
             dialog: {
                 dialogTitle: "",
@@ -233,18 +198,48 @@ export default {
             state.showDialog = true;
         };
 
-        const handleEdit = (row) => {
-            state.dialog.dialogTitle = "Edit";
-            state.dialog.dialogData = JSON.parse(JSON.stringify(row));
-            state.showDialog = true;
-        };
-
         watch(
             () => state.param.search,
             debounce(() => {
                 getData();
             }, 500)
         );
+
+        const changeStatus = (row) => {
+            ElMessageBox.confirm(
+                "Are you sure want to change status of this movie?",
+                "Confirmation",
+                {
+                    confirmButtonText: "Confirm",
+                    cancelButtonText: "Cancel",
+                    type: "warning",
+                    draggable: true,
+                    closeOnClickModal: false,
+                }
+            )
+                .then(() => {
+                    router.patch(
+                        route("admin.orders.change-status", row.id),
+                        {},
+                        {
+                            preserveState: true,
+                            onSuccess: (page) => {
+                                ElMessage.success(page.props.flash.success);
+                            },
+                            onError: (page) => {
+                                ElMessage.error(page.props.flash.error);
+                            },
+                        }
+                    );
+                })
+                .catch(() => {
+                    router.reload();
+                    ElMessage({
+                        type: "info",
+                        message: "Cancel",
+                    });
+                });
+        };
 
         const onSizeChange = (val) => {
             state.param.page_size = val;
@@ -258,42 +253,28 @@ export default {
 
         function getData() {
             state.isLoading = true;
-            router.get(route("admin.customers.index"), state.param, {
+            router.get(route("admin.orders.index"), state.param, {
                 preserveScroll: true,
                 preserveState: true,
                 replace: true,
-                onFinish: () => {
+
+                onFinish: (page) => {
                     state.isLoading = false;
                 },
             });
         }
 
-        const handleBan = (id) => {
-            ElMessageBox.confirm("Are you sure you want to ban?", "Warning", {
-                confirmButtonText: "Confirm",
-                cancelButtonText: "Cancel",
-                type: "warning",
-                draggable: true,
-                closeOnClickModal: false,
-            })
-                .then(() => {
-                    router.patch(
-                        route("admin.customers.handleBan", id),
-                        {},
-                        {
-                            onSuccess: (page) => {
-                                ElMessage.success(page.props.flash.success);
-                            },
-                        }
-                    );
-                })
-                .catch(() => {
-                    ElMessage({
-                        type: "info",
-                        message: "Cancel",
-                    });
-                });
+        const handleEdit = (row) => {
+            state.dialog.dialogTitle = "Edit";
+            state.dialog.dialogData = JSON.parse(JSON.stringify(row));
+            state.showDialog = true;
         };
+
+        const handelDetail = (row) => {
+            state.dialog.dialogTitle = "Detail";
+            state.dialog.dialogData = JSON.parse(JSON.stringify(row));
+            state.showDetail = true;
+        }
 
         const deleteHandler = (id) => {
             ElMessageBox.confirm(
@@ -308,7 +289,7 @@ export default {
                 }
             )
                 .then(() => {
-                    router.delete(route("admin.customers.destroy", id), {
+                    router.delete(route("admin.orders.destroy", id), {
                         onSuccess: (page) => {
                             ElMessage.success(page.props.flash.success);
                         },
@@ -324,20 +305,31 @@ export default {
 
         const closeDialog = () => {
             state.showDialog = false;
+            state.showDetail = false;
         };
 
         return {
             ...toRefs(state),
             addNew,
-            handleEdit,
-            deleteHandler,
             getData,
             onSizeChange,
             onCurrentChange,
             closeDialog,
-            handleBan,
+            changeStatus,
+            handleEdit,
+            handelDetail,
+            deleteHandler
         };
     },
-    components: { Head, AuthenticatedLayout, Plus, Edit, Delete, Dialog },
+    components: {
+    Head,
+    AuthenticatedLayout,
+    Plus,
+    Delete,
+    Dialog,
+    Edit,
+    Detail,
+    View
+},
 };
 </script>

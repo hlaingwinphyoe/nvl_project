@@ -6,7 +6,24 @@
         >
             Dashboard
         </NavLink>
-        <NavLink :href="route('admin.customers.index')" :active="route().current('admin.customers.*')"> Customers </NavLink>
+        <NavLink
+            :href="route('admin.customers.index')"
+            :active="route().current('admin.customers.*')"
+        >
+            Customers
+        </NavLink>
+        <NavLink
+            :href="route('admin.series.index')"
+            :active="route().current('admin.series.*')"
+        >
+            Series
+        </NavLink>
+        <NavLink
+            :href="route('admin.orders.index')"
+            :active="route().current('admin.orders.*')"
+        >
+            Orders
+        </NavLink>
     </div>
 </template>
 

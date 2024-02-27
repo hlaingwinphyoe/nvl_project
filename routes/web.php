@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SerieController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -32,6 +34,12 @@ Route::get('/dashboard', function () {
 
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::resource('/customers', CustomerController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::patch('/customers/{customer}/handle-ban', [CustomerController::class, 'handleBan'])->name('customers.handleBan');
+
+    Route::resource('/series', SerieController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::patch('/series/{serie}/change-status', [SerieController::class, 'changeStatus'])->name('series.change-status');
+
+    Route::resource('orders', OrderController::class)->only(['index', 'store', 'update', 'destroy']);
 
     // profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
