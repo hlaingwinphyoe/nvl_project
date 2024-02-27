@@ -21,8 +21,10 @@ class UserSeeder extends Seeder
             'email' => "admin@gmail.com",
             'email_verified_at' => now(),
             'password' => Hash::make('admin!@#123'),
+            'isAdmin' => true,
         ]);
 
         Customer::factory()->count(50)->create();
+        Serie::factory()->count(30)->create();
     }
 }
