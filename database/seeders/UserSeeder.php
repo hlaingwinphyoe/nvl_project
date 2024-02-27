@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Customer;
+use App\Models\Serie;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -20,5 +22,7 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
             'password' => Hash::make('admin!@#123'),
         ]);
+
+        Customer::factory()->count(50)->create();
     }
 }

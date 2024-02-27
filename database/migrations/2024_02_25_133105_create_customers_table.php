@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,7 +16,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('phone')->nullable();
-            $table->string('username')->unique()->default('NVL');
+            $table->string('username')->unique()->nullable();
             $table->boolean('is_vip')->default(false);
             $table->boolean('is_ban')->default(false);
             $table->string('group')->default('nvl_group');
@@ -27,11 +28,13 @@ return new class extends Migration
             $table->string('nvl_id')->nullable();
             $table->string('slug');
             $table->string('title');
-            $table->string('seasons')->nullable();
-            $table->string('episodes')->nullable();
             $table->string('description')->nullable();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->boolean('is_published')->default(false);
+            $table->double('price')->default(0);
+            $table->foreignIdFor(User::class, 'created_by')->nullable();
+            $table->foreignIdFor(User::class, 'updated_by')->nullable();
+            $table->foreignIdFor(User::class, 'deleted_by')->nullable();
+            $table->boolean('is_published')->default(true);
+            $table->softDeletes();
             $table->timestamps();
         });
 
@@ -39,10 +42,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('customer_id')->constrained()->cascadeOnDelete();
             $table->foreignId('serie_id')->constrained()->cascadeOnDelete();
-            $table->integer('qty');
-            $table->double('unit_price')->constrained()->cascadeOnDelete();
-            $table->double('total')->default(0);
-            $table->boolean('is_published')->default(false);
+            $table->double('buy_price')->default(0);
+            $table->foreignIdFor(User::class, 'created_by')->nullable();
+            $table->foreignIdFor(User::class, 'updated_by')->nullable();
+            $table->foreignIdFor(User::class, 'deleted_by')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }
@@ -53,5 +57,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('customers');
+        Schema::dropIfExists('series');
+        Schema::dropIfExists('orders');
     }
 };

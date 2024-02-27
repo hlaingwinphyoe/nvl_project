@@ -8,7 +8,7 @@
                     <div class="p-6 text-gray-900">
                         <div class="flex items-center justify-between mb-4">
                             <el-button type="primary" @click="addNew">
-                                <el-icon>
+                                <el-icon class="mr-1">
                                     <Plus />
                                 </el-icon>
                                 Add New
@@ -17,6 +17,7 @@
                                 <el-input
                                     placeholder="Search customer..."
                                     v-model="param.search"
+                                    size="large"
                                 />
                             </div>
                         </div>
@@ -80,7 +81,7 @@
                                                 <el-icon><Edit /></el-icon>
                                             </el-button>
                                         </el-tooltip>
-                                        <el-tooltip
+                                        <!-- <el-tooltip
                                             class="box-item"
                                             content="Delete"
                                             placement="top"
@@ -95,6 +96,80 @@
                                             >
                                                 <el-icon><Delete /></el-icon>
                                             </el-button>
+                                        </el-tooltip> -->
+
+                                        <el-tooltip
+                                            v-if="scope.row.is_ban == 0"
+                                            class="box-item"
+                                            content="Ban"
+                                            placement="top"
+                                        >
+                                            <el-button
+                                                type="danger"
+                                                circle
+                                                style="margin-bottom: 5px"
+                                                @click="handleBan(scope.row.id)"
+                                            >
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    class="icon icon-tabler icon-tabler-ban"
+                                                    width="16"
+                                                    height="16"
+                                                    viewBox="0 0 24 24"
+                                                    stroke-width="1.5"
+                                                    stroke="currentColor"
+                                                    fill="none"
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                >
+                                                    <path
+                                                        stroke="none"
+                                                        d="M0 0h24v24H0z"
+                                                        fill="none"
+                                                    />
+                                                    <path
+                                                        d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"
+                                                    />
+                                                    <path
+                                                        d="M5.7 5.7l12.6 12.6"
+                                                    />
+                                                </svg>
+                                            </el-button>
+                                        </el-tooltip>
+                                        <el-tooltip
+                                            v-else
+                                            class="box-item"
+                                            content="UnBan"
+                                            placement="top"
+                                        >
+                                            <el-button
+                                                type="info"
+                                                circle
+                                                style="margin-bottom: 5px"
+                                                @click="handleBan(scope.row.id)"
+                                            >
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    class="icon icon-tabler icon-tabler-arrow-back"
+                                                    width="16"
+                                                    height="16"
+                                                    viewBox="0 0 24 24"
+                                                    stroke-width="1.5"
+                                                    stroke="currentColor"
+                                                    fill="none"
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                >
+                                                    <path
+                                                        stroke="none"
+                                                        d="M0 0h24v24H0z"
+                                                        fill="none"
+                                                    />
+                                                    <path
+                                                        d="M9 11l-4 4l4 4m-4 -4h11a4 4 0 0 0 0 -8h-1"
+                                                    />
+                                                </svg>
+                                            </el-button>
                                         </el-tooltip>
                                     </template>
                                 </el-table-column>
@@ -108,7 +183,7 @@
                                     :page-sizes="pageList"
                                     :current-page="param.page"
                                     :layout="`total,sizes,prev,pager,next,jumper`"
-                                    :total="total"
+                                    :total="customers.total"
                                 />
                             </div>
                         </div>
@@ -144,7 +219,6 @@ export default {
                 dialogTitle: "",
                 dialogData: {},
             },
-            total: props.customers.total,
             pageList: [10, 20, 60, 80, 100],
             param: {
                 page: 1,
@@ -188,10 +262,38 @@ export default {
                 preserveScroll: true,
                 preserveState: true,
                 replace: true,
-
-                onFinish: () => (state.isLoading = false),
+                onFinish: () => {
+                    state.isLoading = false;
+                },
             });
         }
+
+        const handleBan = (id) => {
+            ElMessageBox.confirm("Are you sure you want to ban?", "Warning", {
+                confirmButtonText: "Confirm",
+                cancelButtonText: "Cancel",
+                type: "warning",
+                draggable: true,
+                closeOnClickModal: false,
+            })
+                .then(() => {
+                    router.patch(
+                        route("admin.customers.handleBan", id),
+                        {},
+                        {
+                            onSuccess: (page) => {
+                                ElMessage.success(page.props.flash.success);
+                            },
+                        }
+                    );
+                })
+                .catch(() => {
+                    ElMessage({
+                        type: "info",
+                        message: "Cancel",
+                    });
+                });
+        };
 
         const deleteHandler = (id) => {
             ElMessageBox.confirm(
@@ -233,6 +335,7 @@ export default {
             onSizeChange,
             onCurrentChange,
             closeDialog,
+            handleBan,
         };
     },
     components: { Head, AuthenticatedLayout, Plus, Edit, Delete, Dialog },

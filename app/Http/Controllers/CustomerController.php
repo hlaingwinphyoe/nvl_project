@@ -5,21 +5,24 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CustomerStoreRequest;
 use App\Http\Requests\CustomerUpdateRequest;
 use App\Models\Customer;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class CustomerController extends Controller
 {
     public function index()
     {
-        $customers = Customer::query()->filterOn()->latest()
-            ->paginate(10)
+        $perPage = request('page_size') ?: 10;
+        $customers = Customer::query()
+            ->filterOn()
+            ->orderBy('id','desc')
+            ->paginate($perPage)
             ->withQueryString()
             ->through(fn ($customer) => [
                 'id' => $customer->id,
                 'name' => $customer->name,
                 'username' => $customer->username,
                 'phone' => $customer->phone,
+                'is_ban' => $customer->is_ban,
                 'created_at' => $customer->created_at->diffforHumans()
             ]);
         return Inertia::render('Admin/Customers/Index', [
@@ -46,5 +49,16 @@ class CustomerController extends Controller
         $customer->delete();
 
         return redirect()->back()->with('success', "Successfully Deleted.");
+    }
+
+    public function handleBan(Customer $customer)
+    {
+        if ($customer->is_ban == 0) {
+            $customer->update(['is_ban' => 1]);
+            return redirect()->back()->with('success', 'Banned Successful!');
+        } else {
+            $customer->update(['is_ban' => 0]);
+            return redirect()->back()->with('success', 'UnBan Successful!');
+        }
     }
 }

@@ -8,35 +8,61 @@
         :title="dialogTitle"
         :close-on-click-modal="false"
     >
-        <el-form label-width="120px" ref="formRef" :model="form" label-position="top">
-            <el-form-item
-                label="Name"
-                prop="name"
-                size="large"
-                :rules="[
-                    {
-                        required: true,
-                        message: 'Name is required',
-                        trigger: 'blur',
-                    },
-                ]"
-            >
-                <el-input v-model="form.name" placeholder="" />
-                <div v-if="form.errors.name" class="text-red-600">
-                    {{ form.errors.name }}
-                </div>
-            </el-form-item>
-            <el-form-item label="Username" prop="username" size="large">
-                <el-input v-model="form.username" placeholder="" />
-                <div v-if="form.errors.username" class="text-red-600">
-                    {{ form.errors.username }}
-                    <span class="">Username might not have space.</span>
-                </div>
-            </el-form-item>
-            <el-form-item label="Phone" prop="phone" size="large">
-                <el-input v-model="form.phone" placeholder="" />
-                <div v-if="form.errors.phone" class="text-red-600">
-                    {{ form.errors.phone }}
+        <el-form
+            label-width="120px"
+            ref="formRef"
+            :model="form"
+            label-position="top"
+        >
+            <div class="grid grid-cols-2 gap-4">
+                <el-form-item
+                    label="Title"
+                    prop="title"
+                    size="large"
+                    :rules="[
+                        {
+                            required: true,
+                            message: 'Title is required',
+                            trigger: 'blur',
+                        },
+                    ]"
+                >
+                    <el-input v-model="form.title" placeholder="" />
+                    <div v-if="form.errors.title" class="text-red-600">
+                        {{ form.errors.title }}
+                    </div>
+                </el-form-item>
+                <el-form-item
+                    label="Price"
+                    prop="price"
+                    size="large"
+                    :rules="[
+                        {
+                            required: true,
+                            message: 'Price is required',
+                            trigger: 'blur',
+                        },
+                    ]"
+                >
+                    <el-input
+                        type="number"
+                        v-model="form.price"
+                        placeholder=""
+                    />
+                    <div v-if="form.errors.price" class="text-red-600">
+                        {{ form.errors.price }}
+                    </div>
+                </el-form-item>
+            </div>
+            <el-form-item label="Description" prop="description">
+                <el-input
+                    type="textarea"
+                    v-model="form.description"
+                    placeholder=""
+                    rows="4"
+                />
+                <div v-if="form.errors.description" class="text-red-600">
+                    {{ form.errors.description }}
                 </div>
             </el-form-item>
         </el-form>
@@ -67,10 +93,9 @@ export default {
         const formRef = ref();
 
         const form = useForm({
-            name: "",
-            phone: "",
-            username: "",
-            movie: "",
+            title: "",
+            description: "",
+            price: "",
         });
 
         const submitDialog = (formRef) => {
@@ -78,7 +103,7 @@ export default {
                 if (valid) {
                     if (state.dialogTitle === "Create") {
                         state.doubleClick = true;
-                        form.post(route("admin.customers.store"), {
+                        form.post(route("admin.series.store"), {
                             onSuccess: (page) => {
                                 state.doubleClick = false;
                                 closeDialog(formRef);
@@ -91,7 +116,7 @@ export default {
                     } else {
                         state.doubleClick = true;
                         form.patch(
-                            route("admin.customers.update", props.data.id),
+                            route("admin.series.update", props.data.id),
                             {
                                 onSuccess: (page) => {
                                     state.doubleClick = false;
@@ -116,10 +141,9 @@ export default {
 
         const openDialog = () => {
             state.dialogTitle = props.title;
-            form.name = props.data.name ?? "";
-            form.phone = props.data.phone ?? "";
-            form.username = props.data.username ?? "";
-            form.movie = props.data.movie ?? "";
+            form.title = props.data.title ?? "";
+            form.description = props.data.description ?? "";
+            form.price = props.data.price ?? "";
         };
 
         return {

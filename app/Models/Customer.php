@@ -24,4 +24,14 @@ class Customer extends Model
                 ->orWhere('username', 'like', '%' . request('search') . '%');
         }
     }
+
+    public function scopeNotBan($q)
+    {
+        $q->where('is_ban', 0);
+    }
+
+    public function scopeBanned($q)
+    {
+        $q->where('is_ban', 1);
+    }
 }
