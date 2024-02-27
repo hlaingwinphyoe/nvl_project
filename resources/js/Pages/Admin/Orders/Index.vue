@@ -48,19 +48,29 @@
                                     align="center"
                                 />
                                 <el-table-column
-                                    prop="total_price"
                                     label="Total Price"
                                     align="center"
-                                />
+                                >
+                                    <template #default="scope">
+                                        <strong class="font-bold text-black">{{
+                                            scope.row.total_price
+                                        }}</strong>
+                                        Ks
+                                    </template>
+                                </el-table-column>
                                 <el-table-column
-                                    prop="total_price"
                                     label="Order Items"
                                     align="center"
                                 >
                                     <template #default="scope">
-                                        <el-tag type="success">{{
-                                            scope.row.order_count
-                                        }}</el-tag>
+                                        <el-tag
+                                            type="success"
+                                            class="cursor-pointer"
+                                            effect="dark"
+                                            @click="handelDetail(scope.row)"
+                                        >
+                                            {{ scope.row.order_count }}
+                                        </el-tag>
                                     </template>
                                 </el-table-column>
                                 <el-table-column
@@ -78,7 +88,7 @@
                                 <el-table-column
                                     label="Actions"
                                     align="center"
-                                    width="150px"
+                                    width="180px"
                                 >
                                     <template #default="scope">
                                         <el-tooltip
@@ -87,7 +97,7 @@
                                             placement="top"
                                         >
                                             <el-button
-                                                type="success"
+                                                type="info"
                                                 style="margin-bottom: 5px"
                                                 circle
                                                 @click="handelDetail(scope.row)"
@@ -274,7 +284,7 @@ export default {
             state.dialog.dialogTitle = "Detail";
             state.dialog.dialogData = JSON.parse(JSON.stringify(row));
             state.showDetail = true;
-        }
+        };
 
         const deleteHandler = (id) => {
             ElMessageBox.confirm(
@@ -318,18 +328,18 @@ export default {
             changeStatus,
             handleEdit,
             handelDetail,
-            deleteHandler
+            deleteHandler,
         };
     },
     components: {
-    Head,
-    AuthenticatedLayout,
-    Plus,
-    Delete,
-    Dialog,
-    Edit,
-    Detail,
-    View
-},
+        Head,
+        AuthenticatedLayout,
+        Plus,
+        Delete,
+        Dialog,
+        Edit,
+        Detail,
+        View,
+    },
 };
 </script>

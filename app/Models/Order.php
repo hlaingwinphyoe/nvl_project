@@ -23,7 +23,8 @@ class Order extends Model
         return $this->belongsTo(Customer::class);
     }
 
-    public function order_items(){
+    public function order_items()
+    {
         return $this->hasMany(OrderItem::class);
     }
 
@@ -44,8 +45,12 @@ class Order extends Model
     public function scopeFilterOn($q)
     {
         if (request('search')) {
-            $q->where('name', 'like', '%' . request('search') . '%')
-                ->orWhere('username', 'like', '%' . request('search') . '%');
+            $q->whereHas('customer', function ($query) {
+                $query->where('name', 'like', '%' . request('search') . '%')
+                    ->orWhere('username', 'like', '%' . request('search') . '%');
+            });
         }
     }
+
+    // public function
 }
