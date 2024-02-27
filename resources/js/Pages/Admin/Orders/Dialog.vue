@@ -168,7 +168,7 @@ export default {
         const openDialog = () => {
             state.dialogTitle = props.title;
             form.customer = props.data.customer_id;
-            form.series = props.data.series.map((a) => a.id) ?? "";
+            form.series = props.data.order_items.map((a) => a.serie_id) ?? "";
         };
 
         return {

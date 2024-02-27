@@ -39,8 +39,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::resource('/series', SerieController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::patch('/series/{serie}/change-status', [SerieController::class, 'changeStatus'])->name('series.change-status');
 
-    Route::resource('orders', OrderController::class)->only(['index', 'store', 'show', 'destroy']);
-    Route::get('/orders/customers/{customer}/series', [OrderController::class, 'getSeriesByCustomer'])->name('orders.getSeriesByCustomer');
+    Route::resource('orders', OrderController::class)->only(['index', 'store', 'update', 'destroy']);
 
     // profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

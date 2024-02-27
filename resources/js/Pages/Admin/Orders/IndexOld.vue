@@ -15,7 +15,7 @@
                             </el-button>
                             <div>
                                 <el-input
-                                    placeholder="Search customer..."
+                                    placeholder="Search orders..."
                                     v-model="param.search"
                                     size="large"
                                 />
@@ -27,18 +27,10 @@
                             element-loading-text="Loading..."
                             element-loading-background="rgba(229, 231, 235, 0.7)"
                         >
-                            <el-table
-                                :data="orders.data"
-                                table-layout="fixed"
-                                :default-sort="{
-                                    prop: 'id',
-                                    order: 'descending',
-                                }"
-                            >
+                            <el-table :data="orders.data" table-layout="fixed">
                                 <el-table-column
-                                    prop="id"
+                                    type="index"
                                     label="Sr."
-                                    sortable
                                     width="100"
                                 />
                                 <el-table-column
@@ -48,19 +40,20 @@
                                     align="center"
                                 />
                                 <el-table-column
-                                    prop="total_price"
+                                    prop="total"
                                     label="Total Price"
                                     align="center"
                                 />
                                 <el-table-column
-                                    prop="total_price"
-                                    label="Order Items"
+                                    label="No. of Orders"
                                     align="center"
                                 >
                                     <template #default="scope">
-                                        <el-tag type="success">{{
-                                            scope.row.order_count
-                                        }}</el-tag>
+                                        <span
+                                            class="px-2 text-xs py-0.5 rounded border border-green-500 bg-green-50"
+                                        >
+                                            {{ scope.row.number_of_orders }}
+                                        </span>
                                     </template>
                                 </el-table-column>
                                 <el-table-column
@@ -90,39 +83,9 @@
                                                 type="success"
                                                 style="margin-bottom: 5px"
                                                 circle
-                                                @click="handelDetail(scope.row)"
+                                                @click="handleDetail(scope.row)"
                                             >
                                                 <el-icon><View /></el-icon>
-                                            </el-button>
-                                        </el-tooltip>
-                                        <el-tooltip
-                                            class="box-item"
-                                            content="Edit"
-                                            placement="top"
-                                        >
-                                            <el-button
-                                                type="warning"
-                                                style="margin-bottom: 5px"
-                                                circle
-                                                @click="handleEdit(scope.row)"
-                                            >
-                                                <el-icon><Edit /></el-icon>
-                                            </el-button>
-                                        </el-tooltip>
-                                        <el-tooltip
-                                            class="box-item"
-                                            content="Delete"
-                                            placement="top"
-                                        >
-                                            <el-button
-                                                type="danger"
-                                                circle
-                                                style="margin-bottom: 5px"
-                                                @click="
-                                                    deleteHandler(scope.row.id)
-                                                "
-                                            >
-                                                <el-icon><Delete /></el-icon>
                                             </el-button>
                                         </el-tooltip>
                                     </template>
@@ -155,7 +118,7 @@
             :series="series"
         />
 
-        <Detail
+        <Show
             :show="showDetail"
             @closed="closeDialog"
             :title="dialog.dialogTitle"
@@ -166,13 +129,13 @@
 
 <script>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { Delete, Edit, Plus, View } from "@element-plus/icons-vue";
+import { Delete, View, Plus } from "@element-plus/icons-vue";
 import { Head, router } from "@inertiajs/vue3";
 import { reactive, toRefs, watch } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import debounce from "lodash.debounce";
 import Dialog from "./Dialog.vue";
-import Detail from "./Detail.vue";
+import Show from "./Detail.vue";
 export default {
     props: ["orders", "customers", "series"],
     setup(props) {
@@ -196,6 +159,12 @@ export default {
             state.dialog.dialogTitle = "Create";
             state.dialog.dialogData = {};
             state.showDialog = true;
+        };
+
+        const handleDetail = (row) => {
+            state.dialog.dialogTitle = "Detail";
+            state.dialog.dialogData = JSON.parse(JSON.stringify(row));
+            state.showDetail = true;
         };
 
         watch(
@@ -264,45 +233,6 @@ export default {
             });
         }
 
-        const handleEdit = (row) => {
-            state.dialog.dialogTitle = "Edit";
-            state.dialog.dialogData = JSON.parse(JSON.stringify(row));
-            state.showDialog = true;
-        };
-
-        const handelDetail = (row) => {
-            state.dialog.dialogTitle = "Detail";
-            state.dialog.dialogData = JSON.parse(JSON.stringify(row));
-            state.showDetail = true;
-        }
-
-        const deleteHandler = (id) => {
-            ElMessageBox.confirm(
-                "Are you sure you want to delete?",
-                "Warning",
-                {
-                    confirmButtonText: "Confirm",
-                    cancelButtonText: "Cancel",
-                    type: "warning",
-                    draggable: true,
-                    closeOnClickModal: false,
-                }
-            )
-                .then(() => {
-                    router.delete(route("admin.orders.destroy", id), {
-                        onSuccess: (page) => {
-                            ElMessage.success(page.props.flash.success);
-                        },
-                    });
-                })
-                .catch(() => {
-                    ElMessage({
-                        type: "info",
-                        message: "Cancel",
-                    });
-                });
-        };
-
         const closeDialog = () => {
             state.showDialog = false;
             state.showDetail = false;
@@ -311,25 +241,22 @@ export default {
         return {
             ...toRefs(state),
             addNew,
+            handleDetail,
             getData,
             onSizeChange,
             onCurrentChange,
             closeDialog,
             changeStatus,
-            handleEdit,
-            handelDetail,
-            deleteHandler
         };
     },
     components: {
-    Head,
-    AuthenticatedLayout,
-    Plus,
-    Delete,
-    Dialog,
-    Edit,
-    Detail,
-    View
-},
+        Head,
+        AuthenticatedLayout,
+        Plus,
+        Delete,
+        Dialog,
+        View,
+        Show,
+    },
 };
 </script>
