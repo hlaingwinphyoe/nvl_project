@@ -1,5 +1,5 @@
 <template>
-    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+    <div class="hidden space-x-8 sm:-my-px sm:ms-6 sm:flex">
         <NavLink
             :href="route('admin.dashboard')"
             :active="route().current('admin.dashboard')"

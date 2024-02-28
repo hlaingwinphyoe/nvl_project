@@ -51,11 +51,11 @@
                                         {{ scope.row.title }}
                                     </template>
                                 </el-table-column>
-                                <el-table-column
-                                    prop="price"
-                                    label="Price"
-                                    align="center"
-                                />
+                                <el-table-column label="Price" align="center">
+                                    <template #default="scope">
+                                        {{ scope.row.price }} Ks
+                                    </template>
+                                </el-table-column>
                                 <el-table-column
                                     prop="user"
                                     label="Created By"
