@@ -18,7 +18,7 @@ body {
     user-select: none; */
     overflow-x: hidden;
 }
-
+input,
 [type="text"]:focus,
 [type="password"]:focus,
 [type="number"]:focus,

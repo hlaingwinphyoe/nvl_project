@@ -21,7 +21,9 @@
     },
     "dependencies": {
         "@element-plus/icons-vue": "^2.3.1",
+        "chart.js": "^4.4.1",
         "element-plus": "^2.5.6",
-        "lodash.debounce": "^4.0.8"
+        "lodash.debounce": "^4.0.8",
+        "vue-chartjs": "^5.3.0"
     }
 }

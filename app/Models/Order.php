@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\HasCreatorAndUpdater;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -49,6 +50,14 @@ class Order extends Model
                 $query->where('name', 'like', '%' . request('search') . '%')
                     ->orWhere('username', 'like', '%' . request('search') . '%');
             });
+        }
+
+        if (request('start_date') || request('end_date')) {
+            $start_date = request('start_date') ? Carbon::parse(request('start_date')) : now()->startOfMonth();
+
+            $end_date = request('end_date') ? Carbon::parse(request('end_date')) : now();
+
+            $q->whereBetween('created_at', [$start_date, $end_date]);
         }
     }
 

@@ -7,15 +7,52 @@
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900">
                         <div class="flex items-center justify-between mb-4">
-                            <el-button type="primary" @click="addNew">
-                                <el-icon class="mr-1">
-                                    <Plus />
-                                </el-icon>
-                                Add New
-                            </el-button>
+                            <div class="flex items-center gap-4">
+                                <el-button
+                                    type="primary"
+                                    size="large"
+                                    @click="addNew"
+                                >
+                                    <el-icon class="mr-1">
+                                        <Plus />
+                                    </el-icon>
+                                    Add New
+                                </el-button>
+                                <el-date-picker
+                                    v-model="filter.dateValue"
+                                    type="daterange"
+                                    value-format="YYYY-MM-DD"
+                                    unlink-panels
+                                    range-separator="to"
+                                    start-placeholder="Start Date"
+                                    end-placeholder="End Date"
+                                    size="large"
+                                />
+                                <div class="flex">
+                                    <el-button
+                                        type="warning"
+                                        size="large"
+                                        @click="search(1)"
+                                    >
+                                        <el-icon class="mr-1">
+                                            <Search />
+                                        </el-icon>
+                                        Search
+                                    </el-button>
+                                    <el-button
+                                        type="danger"
+                                        @click="reset"
+                                        size="large"
+                                    >
+                                        <el-icon>
+                                            <Refresh />
+                                        </el-icon>
+                                    </el-button>
+                                </div>
+                            </div>
                             <div>
                                 <el-input
-                                    placeholder="Search series..."
+                                    placeholder="Search customer..."
                                     v-model="param.search"
                                     size="large"
                                 />
@@ -136,7 +173,7 @@
 
 <script>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { Edit, Plus } from "@element-plus/icons-vue";
+import { Edit, Plus, Refresh, Search } from "@element-plus/icons-vue";
 import { Head, router } from "@inertiajs/vue3";
 import { reactive, toRefs, watch } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
@@ -157,6 +194,9 @@ export default {
                 page: 1,
                 page_size: 10,
                 search: "",
+            },
+            filter: {
+                dateValue: [],
             },
         });
 
@@ -238,6 +278,22 @@ export default {
             });
         }
 
+        const search = (page) => {
+            if (state.filter.dateValue && state.filter.dateValue.length) {
+                state.param.start_date = `${state.filter.dateValue[0]}T00:00:00`;
+                state.param.end_date = `${state.filter.dateValue[1]}T23:59:59`;
+            }
+
+            state.param.page = page;
+            state.param.page_size = 10;
+            getData();
+        };
+
+        const reset = () => {
+            state.param = {};
+            search(1);
+        };
+
         const closeDialog = () => {
             state.showDialog = false;
         };
@@ -251,8 +307,18 @@ export default {
             onCurrentChange,
             closeDialog,
             changeStatus,
+            search,
+            reset,
         };
     },
-    components: { Head, AuthenticatedLayout, Plus, Edit, Dialog },
+    components: {
+        Head,
+        AuthenticatedLayout,
+        Plus,
+        Edit,
+        Dialog,
+        Search,
+        Refresh,
+    },
 };
 </script>

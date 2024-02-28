@@ -7,6 +7,7 @@ use App\Models\Customer;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Serie;
+use Carbon\Carbon;
 use Inertia\Inertia;
 
 class OrderController extends Controller
@@ -14,6 +15,7 @@ class OrderController extends Controller
     public function index()
     {
         $perPage = request('page_size') ?: 10;
+
         $orders = Order::query()
             ->with('user', 'customer', 'order_items')
             ->filterOn()
@@ -30,13 +32,13 @@ class OrderController extends Controller
                 'created_at' => $order->created_at->diffforHumans()
             ]);
 
-        $customers = Customer::orderBy('name')->get();
-        $series = Serie::orderBy('title')->get();
+        $customers = Customer::notBan()->orderBy('name')->get();
+        $series = Serie::published()->orderBy('title')->get();
 
         return Inertia::render('Admin/Orders/Index', [
             'orders' => $orders,
             'customers' => $customers,
-            'series' => $series
+            'series' => $series,
         ]);
     }
 
