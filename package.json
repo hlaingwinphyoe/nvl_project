@@ -24,6 +24,7 @@
         "chart.js": "^4.4.1",
         "element-plus": "^2.5.6",
         "lodash.debounce": "^4.0.8",
+        "vercel-php": "^0.6.0",
         "vue-chartjs": "^5.3.0"
     }
 }
