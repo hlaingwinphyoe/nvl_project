@@ -124,6 +124,28 @@
                                         label="Created By"
                                     />
                                     <el-table-column prop="time" label="Date" />
+                                    <el-table-column
+                                        label="Action"
+                                        align="center"
+                                    >
+                                        <template #default="scope">
+                                            <el-tooltip
+                                                class="box-item"
+                                                content="Make VIP"
+                                                placement="top"
+                                            >
+                                                <el-button
+                                                    type="success"
+                                                    circle
+                                                    @click="
+                                                        handleEdit(scope.row)
+                                                    "
+                                                >
+                                                    <el-icon><Check /></el-icon>
+                                                </el-button>
+                                            </el-tooltip>
+                                        </template>
+                                    </el-table-column>
                                 </el-table>
                             </div>
                         </div>
@@ -150,6 +172,7 @@ import {
     PointElement,
 } from "chart.js";
 import { onMounted, reactive, toRefs } from "vue";
+import { Check } from "@element-plus/icons-vue";
 
 ChartJS.register(
     Title,
@@ -179,6 +202,7 @@ export default {
         Head,
         Line,
         Link,
+        Check,
     },
     setup(props) {
         const state = reactive({

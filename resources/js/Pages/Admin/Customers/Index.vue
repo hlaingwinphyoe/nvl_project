@@ -357,8 +357,7 @@ export default {
         };
 
         const reset = () => {
-            state.param = {};
-            search(1);
+            router.get(route('admin.customers.index'))
         };
 
         const closeDialog = () => {

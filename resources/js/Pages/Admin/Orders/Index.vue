@@ -333,8 +333,7 @@ export default {
         };
 
         const reset = () => {
-            state.param = {};
-            search(1);
+            router.get(route('admin.orders.index'));
         };
 
         const handleEdit = (row) => {

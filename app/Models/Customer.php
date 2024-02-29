@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Customer extends Model
 {
@@ -17,6 +18,16 @@ class Customer extends Model
         'is_vip',
         'is_ban'
     ];
+
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    public function order_items()
+    {
+        return $this->hasManyThrough(Order::class, OrderItem::class, 'serie_id', 'customer_id');
+    }
 
     public function scopeFilterOn($q)
     {
